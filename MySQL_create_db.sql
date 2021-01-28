@@ -1,7 +1,6 @@
 USE [Bankomat]
 GO
 
-
 IF OBJECT_ID('dbo.atm_state', 'U') IS NOT NULL
 	DROP TABLE [dbo].[atm_state];
 GO
@@ -27,7 +26,7 @@ GO
 
 CREATE TABLE [dbo].[cards] (
   [id] [int] IDENTITY(1,1) PRIMARY KEY NOT NULL,
-  [number] text NOT NULL,
+  [number] varchar(50) NOT NULL,
   [balance] [bigint]  NULL,
   [jailed][bit]  NULL,
   [blocked][bit]  NULL,
@@ -69,7 +68,7 @@ GO
 CREATE TABLE [dbo].[jailed_cards] (
   [log_id] [int] NOT NULL,
   [card_id] [int] NOT NULL,
-  [reason] text
+  [reason] char(10)
 )  ON [PRIMARY]
 GO
 ALTER TABLE [dbo].[jailed_cards] ADD PRIMARY KEY ([log_id],[card_id]);
@@ -82,7 +81,7 @@ GO
 
 CREATE TABLE [dbo].[operations] (
   [id] [int] IDENTITY(1,1) PRIMARY KEY NOT NULL,
-  [name] text
+  [name] char(10)
 ) ON [PRIMARY]
 GO
 
@@ -115,29 +114,27 @@ CREATE TABLE [dbo].[transacts_nomin] (
 GO
 
 
-
 IF OBJECT_ID('dbo.failed_attempts', 'U') IS NOT NULL
 	DROP VIEW [dbo].[failed_attempts];
 GO
 
-CREATE VIEW [dbo].[failed_attempts]
-AS
-	SELECT crd.id, tlog.t_stamp, tlog.op_type, crd.number, tlog.card_id, count(tlog.card_id) as f_attempts
-	FROM	dbo.cards as crd
-	INNER JOIN
-			dbo.transacts_log as tlog
-	ON 
-		crd.id = tlog.card_id
-    WHERE tlog.op_type = 'pin_ent' group by tlog.card_id
+CREATE VIEW [dbo].[failed_attempts] AS
+   SELECT ProductID, ProductName FROM Products WHERE Discontinued=0
+
 GO
 
 
-#############сделать view из этой таблицы (из лога попытки, )
-drop table if exists failed_attempts;
-CREATE TABLE `failed_attempts`(
-	`t_stamp` timestamp NULL,
-	[card_id] [int] NOT NULL,
-	[att_numb] tinyint 
-) ENGINE=InnoDB  CHARSET=utf8;
-ALTER TABLE [failed_attempts] ADD PRIMARY KEY ([t_stamp]);
+
+
+
+
+
+
+
+
+
+
+
+
+
 
